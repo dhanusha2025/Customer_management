@@ -75,7 +75,8 @@
 
 <!--<table border="1">-->
 <!--  <thead>-->
-<!--  <tr><th>ID</th><th>Name</th><th>Email</th><th>Actions</th></tr>--><!DOCTYPE html>
+<!--  <tr><th>ID</th><th>Name</th><th>Email</th><th>Actions</th></tr>-->
+<!DOCTYPE html>
 <html>
 <head>
   <title>Customer CRUD</title>
@@ -90,6 +91,7 @@
           <td>${customer.id}</td>
           <td>${customer.name}</td>
           <td>${customer.email}</td>
+          <td>${customer.location}</td>
           <td>${customer.phoneNumber || ''}</td>
           <td>
             <button onclick="editCustomer(${customer.id})">Edit</button>
@@ -103,17 +105,16 @@
     async function addCustomer() {
       const name = document.getElementById('name').value;
       const email = document.getElementById('email').value;
+      const location = document.getElementById('location').value;
       const phoneNumber = document.getElementById('phoneNumber').value;
 
       await fetch('/api/customers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, phoneNumber })
+        body: JSON.stringify({ name, email, location, phoneNumber })
       });
 
-      document.getElementById('name').value = '';
-      document.getElementById('email').value = '';
-      document.getElementById('phoneNumber').value = '';
+      clearForm();
       fetchCustomers();
     }
 
@@ -123,7 +124,10 @@
 
       document.getElementById('name').value = customer.name;
       document.getElementById('email').value = customer.email;
+      document.getElementById('location').value = customer.location;
       document.getElementById('phoneNumber').value = customer.phoneNumber || '';
+
+      document.getElementById('submitBtn').textContent = 'Update Customer';
       document.getElementById('submitBtn').onclick = async () => {
         await fetch(`/api/customers/${id}`, {
           method: 'PUT',
@@ -131,12 +135,13 @@
           body: JSON.stringify({
             name: document.getElementById('name').value,
             email: document.getElementById('email').value,
+            location: document.getElementById('location').value,
             phoneNumber: document.getElementById('phoneNumber').value
           })
         });
-        document.getElementById('name').value = '';
-        document.getElementById('email').value = '';
-        document.getElementById('phoneNumber').value = '';
+
+        clearForm();
+        document.getElementById('submitBtn').textContent = 'Add Customer';
         document.getElementById('submitBtn').onclick = addCustomer;
         fetchCustomers();
       };
@@ -147,6 +152,13 @@
       fetchCustomers();
     }
 
+    function clearForm() {
+      document.getElementById('name').value = '';
+      document.getElementById('email').value = '';
+      document.getElementById('location').value = '';
+      document.getElementById('phoneNumber').value = '';
+    }
+
     window.onload = fetchCustomers;
   </script>
 </head>
@@ -154,17 +166,26 @@
 <h1>Customer Management</h1>
 <input type="text" id="name" placeholder="Name" />
 <input type="email" id="email" placeholder="Email" />
+<input type="text" id="location" placeholder="Location" />
 <input type="text" id="phoneNumber" placeholder="Phone Number" />
 <button id="submitBtn" onclick="addCustomer()">Add Customer</button>
 
 <table border="1">
   <thead>
-  <tr><th>ID</th><th>Name</th><th>Email</th><th>Phone Number</th><th>Actions</th></tr>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Location</th>
+    <th>Phone Number</th>
+    <th>Actions</th>
+  </tr>
   </thead>
   <tbody id="customerTableBody"></tbody>
 </table>
 </body>
 </html>
+
 
 <!--  </thead>-->
 <!--  <tbody id="customerTableBody"></tbody>-->
