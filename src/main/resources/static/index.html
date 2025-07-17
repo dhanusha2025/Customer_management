@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Customer CRUD</title>
+  <script>
+    async function fetchCustomers() {
+      const response = await fetch('/api/customers');
+      const customers = await response.json();
+      const tableBody = document.getElementById('customerTableBody');
+      tableBody.innerHTML = '';
+      customers.forEach(customer => {
+        const row = `<tr>
+          <td>${customer.id}</td>
+          <td>${customer.name}</td>
+          <td>${customer.email}</td>
+          <td>
+            <button onclick="editCustomer(${customer.id})">Edit</button>
+            <button onclick="deleteCustomer(${customer.id})">Delete</button>
+          </td>
+        </tr>`;
+        tableBody.innerHTML += row;
+      });
+    }
+
+    async function addCustomer() {
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+
+      await fetch('/api/customers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email })
+      });
+
+      document.getElementById('name').value = '';
+      document.getElementById('email').value = '';
+      fetchCustomers();
+    }
+
+    async function editCustomer(id) {
+      const response = await fetch(`/api/customers/${id}`);
+      const customer = await response.json();
+
+      document.getElementById('name').value = customer.name;
+      document.getElementById('email').value = customer.email;
+      document.getElementById('submitBtn').onclick = async () => {
+        await fetch(`/api/customers/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value
+          })
+        });
+        document.getElementById('name').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('submitBtn').onclick = addCustomer;
+        fetchCustomers();
+      };
+    }
+
+    async function deleteCustomer(id) {
+      await fetch(`/api/customers/${id}`, { method: 'DELETE' });
+      fetchCustomers();
+    }
+
+    window.onload = fetchCustomers;
+  </script>
+</head>
+<body>
+<h1>Customer Management</h1>
+<input type="text" id="name" placeholder="Name" />
+<input type="email" id="email" placeholder="Email" />
+<button id="submitBtn" onclick="addCustomer()">Add Customer</button>
+
+<table border="1">
+  <thead>
+  <tr><th>ID</th><th>Name</th><th>Email</th><th>Actions</th></tr>
+  </thead>
+  <tbody id="customerTableBody"></tbody>
+</table>
+</body>
+</html>
