@@ -12,6 +12,7 @@ public class Customer {
     private String name;
     private String email;
     private String phoneNumber;
+    private String location;
 
     // Getters and setters
     public Long getId() {
@@ -38,7 +39,23 @@ public class Customer {
         this.email = email;
     }
 
-    public String getPhoneNumber() { return phoneNumber; }
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
 }
+
+
+
