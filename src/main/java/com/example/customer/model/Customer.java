@@ -1,5 +1,6 @@
 package com.example.customer.model;
-
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.persistence.*;
 
 @Entity
@@ -9,6 +10,8 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Name is required")
+    @Pattern(regexp = "^[A-Za-z ]+$", message = "Name must contain only letters and spaces")
     private String name;
     private String email;
     private String phoneNumber;

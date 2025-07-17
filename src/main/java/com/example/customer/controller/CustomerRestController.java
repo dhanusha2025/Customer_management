@@ -2,8 +2,9 @@ package com.example.customer.controller;
 
 import com.example.customer.model.Customer;
 import com.example.customer.service.CustomerService;
-import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,16 +26,16 @@ public class CustomerRestController {
     @GetMapping("/{id}")
     public Customer getOne(@PathVariable Long id) {
         return customerService.getCustomerById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
     }
 
     @PostMapping
-    public Customer create(@RequestBody Customer customer) {
+    public Customer create(@Valid @RequestBody Customer customer) {
         return customerService.saveCustomer(customer);
     }
 
     @PutMapping("/{id}")
-    public Customer update(@PathVariable Long id, @RequestBody Customer customer) {
+    public Customer update(@PathVariable Long id, @Valid @RequestBody Customer customer) {
         customer.setId(id);
         return customerService.saveCustomer(customer);
     }
@@ -64,4 +65,4 @@ public class CustomerRestController {
                 .header("Content-Disposition", "attachment; filename=customers.csv")
                 .body(csvBuilder.toString());
     }
-    }
+}
